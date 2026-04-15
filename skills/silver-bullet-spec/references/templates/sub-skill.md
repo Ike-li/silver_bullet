@@ -109,4 +109,4 @@
 
 ### 8. 归档触发
 
-全部任务完成后，按主 skill **silver-bullet-spec** 执行阶段 7：将产物移入 `docs/archives/<项目名>/`，布局见 `references/templates/archive.md`。
+全部任务完成后，按主 skill **silver-bullet-spec** 执行阶段 7：将产物移入 `docs/archives/<项目名>/`，布局见 `skills/silver-bullet-spec/references/templates/archive.md`。
