@@ -77,6 +77,29 @@ Skill 评估与迭代方法。
 
 ---
 
+## 文档状态
+
+### 已完成
+- [`skill-authoring-guidelines.md`](./skill-authoring-guidelines.md)
+- [`skill-evaluation-loop.md`](./skill-evaluation-loop.md)
+
+### 待补充
+- `skill-review-checklist.md`
+- `skill-trigger-writing-guide.md`
+- `skill-resource-layering.md`
+
+### 规划中
+- `repo-capability-intake.md`
+- `third-party-skill-adoption.md`
+- `skill-lifecycle.md`
+
+说明：
+- **已完成**：已写入仓库并可直接使用。
+- **待补充**：主题已明确，适合在现有两份主文档稳定使用后继续拆分。
+- **规划中**：暂时只保留方向，不急于扩写，避免 `docs/` 过早膨胀。
+
+---
+
 ## 后续可扩展文档
 
 未来可继续补充：
