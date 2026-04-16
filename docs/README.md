@@ -6,7 +6,7 @@
 
 ## 当前文档
 
-### 1. `skill-authoring-guidelines.md`
+### 1. [`skill-authoring-guidelines.md`](./skill-authoring-guidelines.md)
 Skill 编写指南。
 
 说明如何在 `silver_bullet` 中设计和编写一个高质量 skill，包括：
@@ -28,7 +28,7 @@ Skill 编写指南。
 
 ---
 
-### 2. `skill-evaluation-loop.md`
+### 2. [`skill-evaluation-loop.md`](./skill-evaluation-loop.md)
 Skill 评估与迭代方法。
 
 说明如何验证一个 skill 是否真的有效，包括：
@@ -50,15 +50,13 @@ Skill 评估与迭代方法。
 
 ---
 
-## 当前建议
+## 推荐阅读顺序
 
-对 `silver_bullet` 当前仓库，优先按以下顺序使用这些文档：
-
-1. 先看 `skill-authoring-guidelines.md`
+1. 先看 [`skill-authoring-guidelines.md`](./skill-authoring-guidelines.md)
    - 用于设计新 skill
    - 用于审查已有 skill 是否写得过胖、过宽、过虚
 
-2. 再看 `skill-evaluation-loop.md`
+2. 再看 [`skill-evaluation-loop.md`](./skill-evaluation-loop.md)
    - 用于设计测试 prompt
    - 用于做一轮真实评估与迭代
 
@@ -68,8 +66,8 @@ Skill 评估与迭代方法。
 
 当前仓库中，建议优先应用这些文档的方法论到以下 skill：
 
-- `skills/silver-bullet-spec/`
-- `skills/systematic-debugging-lite/`
+- [`skills/silver-bullet-spec/`](../skills/silver-bullet-spec/)
+- [`skills/systematic-debugging-lite/`](../skills/systematic-debugging-lite/)
 
 原因：
 
