@@ -130,10 +130,8 @@ done
 cat > "$TARGET_DIR/SKILL.md" <<SKILL_EOF
 ---
 name: $NEW_NAME
-description: >-
-  $SRC_DESC
-  TODO: 补充典型用户触发表达。
-  TODO: 补充不该触发的场景（不用于：...）。
+description: "$SRC_DESC TODO: 补充典型用户触发表达。TODO: 补充不该触发的场景（不用于：...）。"
+user-invocable: true
 version: 0.1.0
 ---
 

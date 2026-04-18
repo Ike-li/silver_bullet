@@ -28,13 +28,14 @@ SKILLS_DIR="$REPO_ROOT/skills"
 
 die() { echo "错误: $*" >&2; exit 1; }
 
-# 从 SKILL.md 提取 frontmatter 中的 description（合并多行为单行）
+# 从 SKILL.md 提取 frontmatter 中的 description（支持多行 >- 和单行引号两种格式）
 extract_description() {
     awk '
     BEGIN { in_fm=0; in_desc=0; desc="" }
     /^---$/ { if (in_fm) { print desc; exit } else { in_fm=1; next } }
     in_fm && /^description:/ {
         sub(/^description: *>?-? */, "")
+        gsub(/^"|"$/, "", $0)
         if ($0 != "") desc = $0
         in_desc = 1; next
     }
@@ -85,34 +86,37 @@ sed_inplace() {
 # ============================================================================
 # 安装：Claude Code
 # ============================================================================
-# 策略：将 skill 目录复制（或 symlink）到目标项目的 skills/ 下
-# Claude Code 会自动发现 skills/<name>/SKILL.md
+# 策略：将 skill 目录安装到 .claude/skills/<name>/SKILL.md
+# Claude Code 从 .claude/skills/<name>/SKILL.md 发现 skill
 
 install_claude_code() {
     local skill_name="$1" skill_dir="$2" target="$3" use_link="$4"
-    local dest="$target/skills/$skill_name"
+    local dest_dir="$target/.claude/skills/$skill_name"
 
-    mkdir -p "$target/skills"
-
-    if [[ -e "$dest" ]]; then
+    if [[ -e "$dest_dir" ]]; then
         if [[ "$UPDATE" -eq 1 ]]; then
-            rm -rf "$dest"
+            rm -rf "$dest_dir"
         else
-            die "已存在: $dest（使用 --update 更新，或 --uninstall 卸载）"
+            die "已存在: $dest_dir（使用 --update 更新，或 --uninstall 卸载）"
         fi
     fi
 
     if [[ "$use_link" -eq 1 ]]; then
-        ln -sf "$skill_dir" "$dest"
-        echo "已链接: $dest → $skill_dir"
+        mkdir -p "$target/.claude/skills"
+        ln -sf "$skill_dir" "$dest_dir"
+        echo "已链接: $dest_dir → $skill_dir"
     else
-        cp -r "$skill_dir" "$dest"
-        echo "已复制到: $dest"
+        mkdir -p "$dest_dir"
+        cp "$skill_dir/SKILL.md" "$dest_dir/SKILL.md"
+        # 复制 references
+        if [[ -d "$skill_dir/references" ]]; then
+            cp -r "$skill_dir/references" "$dest_dir/references"
+        fi
+        echo "已复制到: $dest_dir"
     fi
 
     echo ""
-    echo "Claude Code 会自动发现 skills/$skill_name/SKILL.md"
-    echo "references/ 等资源目录也已就位，skill 可按需读取"
+    echo "Claude Code 已注册 skill: /skills 可见 $skill_name"
 }
 
 # ============================================================================
@@ -184,6 +188,9 @@ install_codex() {
         echo "$content"
         echo ""
         echo "> 来源: silver_bullet/skills/$skill_name"
+        if [[ -d "$skill_dir/references" ]]; then
+            echo "> 完整参考资料: $skill_dir/references/"
+        fi
         echo "$marker_end"
     } >> "$dest"
 
@@ -220,6 +227,9 @@ install_copilot() {
         echo "$content"
         echo ""
         echo "> 来源: silver_bullet/skills/$skill_name"
+        if [[ -d "$skill_dir/references" ]]; then
+            echo "> 完整参考资料: $skill_dir/references/"
+        fi
         echo "$marker_end"
     } >> "$dest"
 
@@ -235,13 +245,10 @@ uninstall_skill() {
 
     case "$tool" in
         claude-code)
-            local dest="$target/skills/$skill_name"
-            if [[ -L "$dest" ]]; then
-                rm "$dest"
-                echo "已删除链接: $dest"
-            elif [[ -d "$dest" ]]; then
+            local dest="$target/.claude/skills/$skill_name"
+            if [[ -e "$dest" ]]; then
                 rm -rf "$dest"
-                echo "已删除目录: $dest"
+                echo "已删除: $dest"
             else
                 die "未找到: $dest"
             fi

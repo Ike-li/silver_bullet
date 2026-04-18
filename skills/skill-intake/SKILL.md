@@ -1,9 +1,7 @@
 ---
 name: skill-intake
-description: >-
-  第三方 skill 接入与适配：从外部来源（GitHub 仓库、vendor 目录、本地路径）引入 skill 并适配为 silver_bullet 格式。
-  当用户给出一个 skill 的路径、URL、GitHub 地址，或说"帮我接入这个 skill""引入这个 skill""把这个 skill 加进来""适配这个 skill"时触发。
-  不用于：从零新建 skill（用 new-skill.sh）、修改已有 skill、安装 skill 到目标项目（用 install.sh）。
+description: "第三方 skill 接入与适配：从外部来源（GitHub 仓库、vendor 目录、本地路径）引入 skill 并适配为 silver_bullet 格式。当用户给出一个 skill 的路径、URL、GitHub 地址，或说'帮我接入这个 skill''引入这个 skill''把这个 skill 加进来''适配这个 skill'时触发。不用于：从零新建 skill（用 new-skill.sh）、修改已有 skill、安装 skill 到目标项目（用 install.sh）。"
+user-invocable: true
 version: 0.1.0
 ---
 

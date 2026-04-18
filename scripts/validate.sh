@@ -39,13 +39,15 @@ extract_field() {
     ' "$file"
 }
 
-# 提取 description（可能是多行 >- 格式）
+# 提取 description（支持多行 >- 和单行引号两种格式）
 extract_description() {
     awk '
     BEGIN { in_fm=0; in_desc=0; desc="" }
     /^---$/ { if (in_fm) { print desc; exit } else { in_fm=1; next } }
     in_fm && /^description:/ {
         sub(/^description: *>?-? */, "")
+        # 去掉引号
+        gsub(/^"|"$/, "", $0)
         if ($0 != "") desc = $0
         in_desc = 1; next
     }

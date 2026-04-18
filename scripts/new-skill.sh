@@ -43,10 +43,8 @@ mkdir -p "$SKILL_DIR/references"
 cat > "$SKILL_DIR/SKILL.md" <<'TEMPLATE'
 ---
 name: SKILL_NAME_PLACEHOLDER
-description: >-
-  TODO: 说明这个 skill 做什么。
-  TODO: 写明什么时候应该触发，包含典型用户表达。
-  TODO: 写明不该触发的场景。
+description: "TODO: 说明这个 skill 做什么。写明什么时候应该触发，包含典型用户表达。写明不该触发的场景。"
+user-invocable: true
 version: 0.1.0
 ---
 

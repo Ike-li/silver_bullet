@@ -62,7 +62,7 @@ scripts/                 # 工具脚本
 
 | 工具 | 产物位置 |
 |:-----|:---------|
-| Claude Code | `skills/<name>/SKILL.md`（复制或 symlink） |
+| Claude Code | `.claude/skills/<name>.md`（复制或 symlink） |
 | Cursor | `.cursor/rules/<name>.mdc` |
 | Codex | `AGENTS.md` |
 | Copilot | `.github/copilot-instructions.md` |
