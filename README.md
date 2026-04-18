@@ -31,6 +31,7 @@ scripts/                 # 工具脚本
 |:------|:-----|
 | `silver-bullet-spec` | 复杂任务总控：分析 → 计划 → 执行 → 归档 |
 | `systematic-debugging-lite` | 执行阶段排障：先根因后修复、先证据后结论 |
+| `skill-intake` | 第三方 skill 接入与适配 |
 
 ## 安装 Skill 到项目
 

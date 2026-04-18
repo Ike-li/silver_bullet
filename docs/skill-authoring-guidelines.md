@@ -413,27 +413,11 @@ description: 提供调试帮助
 
 ## 十五、第三方 Skill 接入
 
-从外部来源（如 `anthropics/skills`、`vendor/superpowers`、社区仓库）引入 skill 时，使用标准接入流程：
+详细接入流程见 `skills/skill-intake/SKILL.md`（可被大模型自动触发执行）。
 
-```bash
-./scripts/intake-skill.sh <源skill目录> <新skill名>
-```
+接入工具：`./scripts/intake-skill.sh <源skill目录> <新skill名>`
 
-脚本会自动：
-1. 读取源 SKILL.md 的 frontmatter 和正文
-2. 在 `skills/<新名>/` 下生成适配后的脚手架
-3. 复制 references/scripts/examples 等资源目录
-4. 生成 `INTAKE.md` 接入审计清单
-
-### 接入后需要人工完成的工作
-
-1. **description 适配**：补充中文触发短语和负面边界
-2. **内容审计**：通读正文，确认无安全风险，裁剪不需要的部分
-3. **路径修正**：所有引用路径改为适配后的路径
-4. **边界审计**：确认与仓库内现有 skill 无职责重叠
-5. **验证**：运行 `./scripts/validate.sh <名称>`，并用 2-3 个真实 prompt 试跑
-
-### 接入原则
+接入原则：
 
 - **不要原样照搬**：第三方 skill 的 description、正文结构、资源组织可能不符合本仓库规范
 - **保留来源追溯**：在 README.md 中记录原始来源、接入日期
