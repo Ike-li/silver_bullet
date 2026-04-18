@@ -2,6 +2,8 @@
 name: systematic-debugging-lite
 description: >-
   轻量化系统调试技能：用于 bug、测试失败、异常行为、构建失败与集成问题排查。强调先根因后修复、先证据后结论、一次只验证一个假设，适合作为 silver-bullet-spec 执行阶段的问题定位辅助。
+  当用户说"根因是什么""为什么失败了""先别修，先查清楚""这个 bug 怎么回事""测试为什么挂了""定位一下问题"时触发。
+  不用于：普通功能开发、需求规划、单纯代码生成、根因已明确且只差一个极小修复的场景。
 version: 0.1.0
 ---
 
@@ -88,7 +90,7 @@ version: 0.1.0
 
 ### Phase 5：连续失败后的升级处理
 
-**触发建议**：同一问题连续 3 次及以上修复仍失败，或每次修复引入新症状。  
+**触发信号**：同一问题修复后立即引入新回归；或同一根因假设反复被推翻却找不到替代假设；或已尝试多轮修复但症状未收敛。
 **动作**：
 
 1. 暂停继续打补丁。
@@ -123,3 +125,8 @@ version: 0.1.0
 - `silver-bullet-spec` 负责复杂任务总控（分析、计划、进度、归档）。
 - `systematic-debugging-lite` 负责执行阶段问题排查（定位、证据、假设验证、修复前门禁）。
 - 当执行阶段出现 bug/test failure/unexpected behavior 时，先用本 skill；若确认是架构级问题，再回流 `silver-bullet-spec` 做方案层调整。
+
+## 附加资源
+
+- 完成前自检清单：`references/root-cause-checklist.md`
+- 调试记录模板（跨会话持久化）：`references/debug-log-template.md`

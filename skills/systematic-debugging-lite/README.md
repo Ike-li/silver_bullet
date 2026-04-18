@@ -53,4 +53,5 @@
 ## 相关文件
 
 - 主规则：`SKILL.md`
-- 轻量检查单：`references/root-cause-checklist.md`
+- 完成前自检清单：`references/root-cause-checklist.md`
+- 调试记录模板：`references/debug-log-template.md`
