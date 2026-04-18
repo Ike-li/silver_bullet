@@ -1,3 +1,5 @@
+<!-- 自动生成，请勿直接编辑。源文件: CLAUDE.md —— 运行 ./scripts/sync-entry.sh 同步 -->
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.

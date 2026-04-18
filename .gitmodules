@@ -1,0 +1,12 @@
+[submodule "vendor/minimax-ai"]
+	path = vendor/minimax-ai
+	url = https://github.com/MiniMax-AI/skills.git
+	branch = main
+[submodule "vendor/spec_driven_develop"]
+	path = vendor/spec_driven_develop
+	url = https://github.com/zhu1090093659/spec_driven_develop.git
+	branch = main
+[submodule "vendor/superpowers"]
+	path = vendor/superpowers
+	url = https://github.com/obra/superpowers.git
+	branch = main

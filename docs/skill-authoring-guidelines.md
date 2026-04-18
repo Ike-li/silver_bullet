@@ -149,22 +149,25 @@ version: 0.1.0
 
 ## 五、description 的写法要求
 
-description 不是“简介”，而是“触发契约”。
+description 不是”简介”，而是”触发契约”。
+
+> **关于触发倾向**：根据 Anthropic 官方观察，Claude 倾向于”不够积极地触发 skill”（undertrigger）。因此 description 应在精确和积极之间取得平衡——既要有边界，也要覆盖足够多的触发场景，包括用户没有明确提到 skill 名称但确实需要它的情况。
 
 ### 应写什么
 
 - 具体任务类型
-- 典型用户表达
+- 典型用户表达（多种说法，包括口语化的）
 - 相邻场景的边界
-- 必要时指出不该触发的情况
+- 不该触发的场景（不用于：...）
+- 用户未明确说出 skill 名称但需要它的场景
 
 ### 应避免什么
 
 - 只写抽象能力名词
-- 只写“用于处理 X”
-- 只写模糊词，如“复杂任务”“高级工作流”
+- 只写”用于处理 X”
+- 只写模糊词，如”复杂任务””高级工作流”
 - 没有示例短语
-- 触发范围过宽
+- 触发范围过宽或过窄
 
 ### 推荐写法
 
@@ -237,13 +240,13 @@ description: 提供调试帮助
 
 ## 七、渐进披露（Progressive Disclosure）
 
-`silver_bullet` 中 skill 应遵守三层加载思路：
+`silver_bullet` 中 skill 应遵守三层加载思路（与 Anthropic Agent Skills 规范对齐）：
 
 ### 第一层：元数据
-常驻、最短、只负责触发判断。
+常驻、最短、只负责触发判断。约 100 词以内。
 
 ### 第二层：`SKILL.md`
-在 skill 触发时加载，负责提供核心流程、关键判断、输出格式。
+在 skill 触发时加载，负责提供核心流程、关键判断、输出格式。建议控制在 500 行以内；接近此限时应增加层级并在正文中明确指向 references。
 
 ### 第三层：资源目录
 在需要时读取或执行：
@@ -408,7 +411,54 @@ description: 提供调试帮助
 
 ---
 
-## 十五、Silver Bullet 当前建议
+## 十五、第三方 Skill 接入
+
+从外部来源（如 `anthropics/skills`、`vendor/superpowers`、社区仓库）引入 skill 时，使用标准接入流程：
+
+```bash
+./scripts/intake-skill.sh <源skill目录> <新skill名>
+```
+
+脚本会自动：
+1. 读取源 SKILL.md 的 frontmatter 和正文
+2. 在 `skills/<新名>/` 下生成适配后的脚手架
+3. 复制 references/scripts/examples 等资源目录
+4. 生成 `INTAKE.md` 接入审计清单
+
+### 接入后需要人工完成的工作
+
+1. **description 适配**：补充中文触发短语和负面边界
+2. **内容审计**：通读正文，确认无安全风险，裁剪不需要的部分
+3. **路径修正**：所有引用路径改为适配后的路径
+4. **边界审计**：确认与仓库内现有 skill 无职责重叠
+5. **验证**：运行 `./scripts/validate.sh <名称>`，并用 2-3 个真实 prompt 试跑
+
+### 接入原则
+
+- **不要原样照搬**：第三方 skill 的 description、正文结构、资源组织可能不符合本仓库规范
+- **保留来源追溯**：在 README.md 中记录原始来源、接入日期
+- **只引入真正需要的**：一个 skill 解决一个问题；如果第三方 skill 太大，只提取需要的部分
+- **审计优先于启用**：INTAKE.md 清单未全部勾选前，不算正式启用
+
+---
+
+## 十六、与 Anthropic Agent Skills 规范的对齐
+
+本仓库的 skill 格式与 [Anthropic Agent Skills 规范](https://agentskills.io/specification) 保持兼容：
+
+| 字段 | 官方规范 | silver_bullet |
+|:-----|:---------|:-------------|
+| `name` | 必需 | 必需，且必须与目录名一致 |
+| `description` | 必需 | 必需，额外要求负面边界和触发短语 |
+| `version` | 可选 | 推荐 |
+
+目录结构完全兼容：`SKILL.md` + `scripts/` + `references/` + `assets/` + `examples/`。
+
+silver_bullet 的 skill 可以直接被 Claude Code 等支持 Agent Skills 规范的工具加载。
+
+---
+
+## 十七、Silver Bullet 当前建议
 
 对 `silver_bullet` 当前仓库，建议保持这类结构：
 
@@ -418,7 +468,7 @@ description: 提供调试帮助
 
 ---
 
-## 十六、结语
+## 十八、结语
 
 写一个 skill，不是把经验堆成一大段提示词，而是把“任务边界、触发条件、核心流程、可复用资源”组织成稳定的能力单元。
 
