@@ -95,6 +95,9 @@ scripts/                 # 工具脚本
 第三方能力仓库通过 git submodule 管理：
 
 ```bash
+# 新增 vendor 仓库
+./scripts/add-vendor.sh <repo-url> [自定义目录名]
+
 # 克隆时初始化
 git clone --recurse-submodules <repo-url>
 
