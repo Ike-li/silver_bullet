@@ -10,3 +10,6 @@
 	path = vendor/superpowers
 	url = https://github.com/obra/superpowers.git
 	branch = main
+[submodule "vendor/anthropic-agent-skills"]
+	path = vendor/anthropic-agent-skills
+	url = https://github.com/anthropics/skills.git
