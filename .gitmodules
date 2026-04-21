@@ -13,3 +13,6 @@
 [submodule "vendor/anthropic-agent-skills"]
 	path = vendor/anthropic-agent-skills
 	url = https://github.com/anthropics/skills.git
+[submodule "vendor/agentsmd"]
+	path = vendor/agentsmd
+	url = https://github.com/agentsmd/agents.md.git
