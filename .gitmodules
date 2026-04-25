@@ -19,3 +19,6 @@
 [submodule "vendor/spec-kit"]
 	path = vendor/spec-kit
 	url = https://github.com/github/spec-kit
+[submodule "vendor/Trellis"]
+	path = vendor/Trellis
+	url = https://github.com/mindfold-ai/Trellis
