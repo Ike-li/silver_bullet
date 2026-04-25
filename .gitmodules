@@ -16,3 +16,6 @@
 [submodule "vendor/agentsmd"]
 	path = vendor/agentsmd
 	url = https://github.com/agentsmd/agents.md.git
+[submodule "vendor/spec-kit"]
+	path = vendor/spec-kit
+	url = https://github.com/github/spec-kit
