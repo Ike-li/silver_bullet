@@ -134,7 +134,7 @@
 - Reviewer MUST 显式 check Constitution 合规性
 - 大于 [400] 行的 PR 必须拆分，除非有架构理由
 
-## Governance
+## 治理 (Governance)
 
 - **最高效力**：本宪法优先于其他一切实践；冲突时以本文件为准。
 - **修订流程 (Amendment Process)**：
@@ -148,8 +148,7 @@
   - MINOR：新增原则 / 显著扩展指南
   - PATCH：措辞、错别字、非语义微调
 - **合规审计**：每季度执行一次"宪法 vs 现状"审计，差异项进 backlog 修复或转为正式豁免。
-- **运行时指南**：日常开发细节请参考 `[GUIDANCE_FILE]`（如 `AGENTS.md` / `CLAUDE.md`），
-  本文件只规定**不可妥协的边界**。
+- **运行时指南**：日常开发细节请参考 `[GUIDANCE_FILE]`（如 `AGENTS.md` / `CLAUDE.md`）， 本文件只规定**不可妥协的边界**。
 
 ## 修订规则
 
