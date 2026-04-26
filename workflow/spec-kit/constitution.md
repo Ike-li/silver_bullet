@@ -1,6 +1,6 @@
-## 核心原则
+# Silver Bullet 宪法
 
-## 三条不可妥协原则
+## 核心原则
 
 ### 1. 不让用户暴露在系统失败中
 
@@ -8,10 +8,10 @@
 
 必须做到：
 
-- 外部依赖必须设置超时
-- 可恢复错误必须给出下一步操作
-- 不可恢复错误必须给出明确失败原因
-- 关键路径必须有降级或回退方案
+- 外部依赖必须设置超时。
+- 可恢复错误必须给出下一步操作。
+- 不可恢复错误必须给出明确失败原因。
+- 关键路径必须有降级或回退方案。
 
 ### 2. 不让密码、token、PII 进入日志
 
@@ -44,123 +44,126 @@
 
 这类代码必须先写失败测试，再写实现。
 
-### I. 代码质量 (Code Quality) — 不容商量 (NON-NEGOTIABLE)
-- **可读优先于聪明**：函数 / 模块命名必须自解释；删除注释后读者仍能理解 WHAT。注释只解释 WHY。
-- **单一职责**：每个模块 / 函数只做一件事；跨切面逻辑（日志、鉴权、事务）必须抽离。
+### 4. 代码质量 (Code Quality) — 不容商量 (NON-NEGOTIABLE)
+
+- **可读优先于聪明**：函数和模块命名必须自解释；删除注释后读者仍能理解 WHAT。注释只解释 WHY。
+- **单一职责**：每个模块和函数只做一件事；跨切面逻辑（日志、鉴权、事务）必须抽离。
 - **静态可验证**：所有代码 MUST 通过 lint、type-check、format 三道关卡，CI 不通过禁止合并。
-- **YAGNI 与反过度抽象**：不为"未来可能需要"写抽象层；直接使用框架而非包装它（Framework Trust）。
-  超过一处重复才允许抽象，三处以下优先复制。
-- **复杂度上限**：单文件 ≤ 400 行、单函数 ≤ 50 行、圈复杂度 ≤ 10；超出必须在计划中说明理由。
+- **YAGNI 与反过度抽象**：不为“未来可能需要”写抽象层；直接使用框架而非包装它（Framework Trust）。超过一处重复才允许抽象，三处以下优先复制。
+- **复杂度上限**：单文件不超过 400 行，单函数不超过 50 行，圈复杂度不超过 10；超出必须在计划中说明理由。
 - **依赖纪律**：新增第三方依赖必须经过评审，记录用途、许可证、维护活跃度与替代方案。
 
-### II. 测试标准 (Testing Standards) — 不容商量 (NON-NEGOTIABLE)
-- **TDD 强制**：实现代码绝不能先于测试。流程严格遵循 Red → Green → Refactor：
-  1. 先写测试并被人 review 批准
-  2. 运行确认测试 FAIL（Red）
-  3. 写最少代码让测试 PASS（Green）
-  4. 在测试保护下重构（Refactor）
+### 5. 测试标准 (Testing Standards) — 不容商量 (NON-NEGOTIABLE)
+
+- **TDD 强制**：实现代码绝不能先于测试。流程严格遵循 Red -> Green -> Refactor：
+  1. 先写测试并被人 review 批准。
+  2. 运行确认测试 FAIL（Red）。
+  3. 写最少代码让测试 PASS（Green）。
+  4. 在测试保护下重构（Refactor）。
 - **测试金字塔**：单元测试覆盖逻辑分支；集成测试覆盖契约；E2E 测试覆盖关键用户旅程。
-- **集成优先 (Integration-First)**：跨服务、跨 schema、对外契约的变更 MUST 用真实环境而非 mock：
-  真实数据库、真实服务实例、真实 HTTP 调用。**Mock 只允许在不可控的外部依赖处使用**。
-- **覆盖率门槛**：核心业务模块行覆盖 ≥ [X]%、分支覆盖 ≥ [Y]%；新代码不得拉低覆盖率。
-- **测试可重复**：测试 MUST 是确定性的、独立的、并行安全的；
-  禁止 `sleep`、禁止依赖执行顺序、禁止依赖外网（除非显式标记为 e2e 并隔离）。
+- **集成优先**：跨服务、跨 schema、对外契约的变更 MUST 用真实环境而非 mock：真实数据库、真实服务实例、真实 HTTP 调用。Mock 只允许在不可控的外部依赖处使用。
+- **覆盖率门槛**：核心业务模块行覆盖不低于 [X]%，分支覆盖不低于 [Y]%；新代码不得拉低覆盖率。
+- **测试可重复**：测试 MUST 是确定性的、独立的、并行安全的；禁止 `sleep`、禁止依赖执行顺序、禁止依赖外网（除非显式标记为 e2e 并隔离）。
 - **回归保护**：所有线上 bug fix 必须先写一条复现测试再修。
 
-### III. 用户体验一致性 (UX Consistency) — 不容商量 (NON-NEGOTIABLE)
-- **设计系统单一来源**：颜色、字号、间距、阴影、圆角、动效曲线 MUST 来自统一的 design tokens；
-  禁止硬编码样式值。
-- **交互模式统一**：相同语义的操作（确认 / 取消 / 破坏性操作 / 加载 / 空状态 / 错误状态）
-  在全应用使用相同组件与文案模式。
-- **可访问性 (a11y) 是基线**：所有交互组件 MUST 满足 WCAG 2.1 AA：
-  键盘可达、焦点可见、对比度 ≥ 4.5:1、有语义化标签 / aria 属性。
-- **响应式与国际化**：所有 UI MUST 在 [支持的最小视口] 下不破版；所有面向用户文案 MUST 走 i18n 框架，
-  禁止硬编码字符串。
-- **错误与反馈**：操作 MUST 在 [N] ms 内给出反馈；失败 MUST 给出可执行下一步（重试 / 回退 / 求助），
-  禁止仅显示堆栈或英文技术错误码。
-- **CLI / API 同样适用一致性**：CLI 输入走 stdin/args、输出走 stdout、错误走 stderr，
-  支持 `--json` 与人类可读两种格式；REST/RPC 错误码、字段命名、分页参数全局统一。
+### 6. 用户体验一致性 (UX Consistency) — 不容商量 (NON-NEGOTIABLE)
 
-### IV. 性能要求 (Performance Requirements) — 不容商量 (NON-NEGOTIABLE)
-- **预算化 (Performance Budget)**：每个面向用户的关键路径必须有量化预算并在 CI 中守护：
-  - Web：LCP ≤ 2.5s、INP ≤ 200ms、CLS ≤ 0.1（P75，弱网 4G）
-  - API：p95 延迟 ≤ [200] ms、p99 ≤ [500] ms、错误率 ≤ [0.1]%
-  - 包体：首屏 JS ≤ [200] KB gzip
-  - 后端：单实例稳态 CPU ≤ [70]%、内存 ≤ [80]%
+- **设计系统单一来源**：颜色、字号、间距、阴影、圆角、动效曲线 MUST 来自统一的 design tokens；禁止硬编码样式值。
+- **交互模式统一**：相同语义的操作（确认、取消、破坏性操作、加载、空状态、错误状态）在全应用使用相同组件与文案模式。
+- **可访问性是基线**：所有交互组件 MUST 满足 WCAG 2.1 AA：键盘可达、焦点可见、对比度不低于 4.5:1、有语义化标签或 aria 属性。
+- **响应式与国际化**：所有 UI MUST 在 [支持的最小视口] 下不破版；所有面向用户文案 MUST 走 i18n 框架，禁止硬编码字符串。
+- **错误与反馈**：操作 MUST 在 [N] ms 内给出反馈；失败 MUST 给出可执行下一步（重试、回退、求助），禁止仅显示堆栈或英文技术错误码。
+- **CLI / API 同样适用一致性**：CLI 输入走 stdin/args、输出走 stdout、错误走 stderr，支持 `--json` 与人类可读两种格式；REST/RPC 错误码、字段命名、分页参数全局统一。
+
+### 7. 性能要求 (Performance Requirements) — 不容商量 (NON-NEGOTIABLE)
+
+- **预算化**：每个面向用户的关键路径必须有量化预算并在 CI 中守护：
+  - Web：LCP 不高于 2.5s、INP 不高于 200ms、CLS 不高于 0.1（P75，弱网 4G）。
+  - API：p95 延迟不高于 [200] ms、p99 不高于 [500] ms、错误率不高于 [0.1]%。
+  - 包体：首屏 JS 不超过 [200] KB gzip。
+  - 后端：单实例稳态 CPU 不高于 [70]%，内存不高于 [80]%。
 - **先测量后优化**：性能改动 MUST 附带 before/after 基准数据；禁止凭直觉优化。
 - **N+1 与不必要 IO 零容忍**：DB 查询、远程调用必须有 trace；新增端点 MUST 通过查询计数断言。
 - **回归门禁**：性能基准跌出预算 [X]% 即阻断合并，与单元测试同等地位。
 - **可降级**：所有外部依赖必须有超时、重试上限、熔断与降级路径；不允许无界等待。
 
-### V. 可观测性与版本治理 (Observability & Versioning)
+### 8. 可观测性与版本治理 (Observability & Versioning)
+
 - **结构化日志**：日志 MUST 是 JSON 结构化、带 trace id；禁止 `print` / `console.log` 进入主分支。
 - **三大支柱齐备**：所有线上服务 MUST 输出 metrics（RED/USE）、logs、traces，并接入统一平台。
-- **SemVer 强制**：对外接口（API、库、CLI）严格遵循 MAJOR.MINOR.PATCH；
-  破坏性变更 MUST 走废弃期 + 迁移指南。
-- **变更可回滚**：每个 release MUST 有回滚方案；DB 迁移 MUST 双向兼容（expand → migrate → contract）。
+- **SemVer 强制**：对外接口（API、库、CLI）严格遵循 MAJOR.MINOR.PATCH；破坏性变更 MUST 走废弃期 + 迁移指南。
+- **变更可回滚**：每个 release MUST 有回滚方案；DB 迁移 MUST 双向兼容（expand -> migrate -> contract）。
 
-## Additional Constraints
+## 附加约束 (Additional Constraints)
+
 <!-- 在此填入项目特有的硬性约束 -->
+
 - **技术栈**：[Language / Framework / Runtime 版本下限]
 - **支持平台**：[浏览器 / OS / 移动端版本矩阵]
 - **合规标准**：[GDPR / SOC2 / 行业特定标准]
 - **数据驻留 / 安全基线**：[加密、密钥管理、PII 处理规则]
 
-## Development Workflow
+## 开发流程 (Development Workflow)
 
-### Quality Gates（PR 合并前必过）
-1. **Lint & Format Gate**：静态检查零告警
-2. **Type Gate**：类型检查零错误
-3. **Test Gate**：所有测试通过 + 覆盖率不下降
-4. **Performance Gate**：性能基准在预算内
-5. **a11y Gate**：自动化 a11y 扫描零严重问题
-6. **Constitution Gate**：PR 描述声明并验证未违反任一原则；
-   如违反，引用对应的 `Complexity Tracking` 条目
+### PR 合并前质量门禁
 
-### Plan-Stage Constitution Check
-进入 Phase 0 之前 MUST 通过以下闸门，再次在 Phase 1 设计完成后复查：
-- [ ] **Simplicity Gate**：项目数 ≤ 3，无投机性"未来需求"
-- [ ] **Anti-Abstraction Gate**：直接使用框架，未引入无理由的中间层
-- [ ] **Test-First Gate**：契约 / 测试已先于实现写入
-- [ ] **Integration-First Gate**：真实环境契约测试已规划
-- [ ] **UX Consistency Gate**：复用 design tokens 与既有组件，未引入孤立样式
-- [ ] **Performance Gate**：每条关键路径已挂上预算
+1. **Lint & Format Gate**：静态检查零告警。
+2. **Type Gate**：类型检查零错误。
+3. **Test Gate**：所有测试通过，覆盖率不下降。
+4. **Performance Gate**：性能基准在预算内。
+5. **a11y Gate**：自动化 a11y 扫描零严重问题。
+6. **Constitution Gate**：PR 描述声明并验证未违反任一原则；如违反，引用对应的 `Complexity Tracking` 条目。
 
-任一闸门未过，必须在`Complexity Tracking` 中以表格形式登记：
-违反项 / 为何需要 / 为什么更简单的方案被拒。
+### Plan 阶段宪法检查
 
-### Code Review Requirements
-- 至少 1 名 reviewer；触及核心模块需 2 名
-- Reviewer MUST 显式 check Constitution 合规性
-- 大于 [400] 行的 PR 必须拆分，除非有架构理由
+进入 Phase 0 之前 MUST 通过以下闸门，并在 Phase 1 设计完成后复查：
 
-## 治理 (Governance)
+- [ ] **Simplicity Gate**：项目数不超过 3，无投机性“未来需求”。
+- [ ] **Anti-Abstraction Gate**：直接使用框架，未引入无理由的中间层。
+- [ ] **Test-First Gate**：契约 / 测试已先于实现写入。
+- [ ] **Integration-First Gate**：真实环境契约测试已规划。
+- [ ] **UX Consistency Gate**：复用 design tokens 与既有组件，未引入孤立样式。
+- [ ] **Performance Gate**：每条关键路径已挂上预算。
+
+任一闸门未过，必须在 `Complexity Tracking` 中登记：
+
+| 违反项 | 为何需要 | 为什么更简单的方案被拒 |
+|---|---|---|
+
+### Code Review 要求
+
+- 至少 1 名 reviewer；触及核心模块需 2 名。
+- Reviewer MUST 显式 check Constitution 合规性。
+- 大于 [400] 行的 PR 必须拆分，除非有架构理由。
+
+## 治理
 
 - **最高效力**：本宪法优先于其他一切实践；冲突时以本文件为准。
-- **修订流程 (Amendment Process)**：
-  1. 提交修订提案 PR，附带变更动机与影响评估
-  2. 至少 [N] 名维护者 review 并批准
-  3. 给出迁移指南（若为 MAJOR / MINOR）
-  4. 同步更新所有受影响模板，
-     并在文件头生成 **Sync Impact Report**
-- **版本演进 (SemVer)**：
-  - MAJOR：原则的删除或不兼容重定义
-  - MINOR：新增原则 / 显著扩展指南
-  - PATCH：措辞、错别字、非语义微调
-- **合规审计**：每季度执行一次"宪法 vs 现状"审计，差异项进 backlog 修复或转为正式豁免。
-- **运行时指南**：日常开发细节请参考 `[GUIDANCE_FILE]`（如 `AGENTS.md` / `CLAUDE.md`）， 本文件只规定**不可妥协的边界**。
+- **修订流程**：
+  1. 提交修订提案 PR，附带变更动机与影响评估。
+  2. 至少 [N] 名维护者 review 并批准。
+  3. 给出迁移指南（若为 MAJOR / MINOR）。
+  4. 同步更新所有受影响模板，并在文件头生成 Sync Impact Report。
+- **版本演进**：
+  - MAJOR：原则的删除或不兼容重定义。
+  - MINOR：新增原则或显著扩展指南。
+  - PATCH：措辞、错别字、非语义微调。
+- **合规审计**：每季度执行一次“宪法 vs 现状”审计，差异项进 backlog 修复或转为正式豁免。
+- **运行时指南**：日常开发细节请参考 `[GUIDANCE_FILE]`（如 `AGENTS.md` / `CLAUDE.md`），本文件只规定不可妥协的边界。
 
 ## 修订规则
 
 修改本文件必须满足：
 
-1. 删除规则比新增规则优先
-2. 新增规则必须来自真实问题
-3. 90 天内没有发挥作用的规则应删除或降级
-4. 修改必须走 commit 或 PR 记录
+1. 删除规则比新增规则优先。
+2. 新增规则必须来自真实问题。
+3. 90 天内没有发挥作用的规则应删除或降级。
+4. 修改必须走 commit 或 PR 记录。
 
 ## 版本信息
 
-Version: 0.1.0  
-Started: 2026-04-27  
-Next Review: 2026-07-27
+| 字段 | 值 |
+|---|---|
+| Version | 0.1.0 |
+| Started | 2026-04-27 |
+| Next Review | 2026-07-27 |
