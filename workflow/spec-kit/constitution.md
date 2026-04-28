@@ -1,4 +1,4 @@
-# Silver Bullet 宪法 (项目原则)
+# Silver Bullet 宪法 (通用项目原则)
 
 ## 核心原则
 
@@ -13,36 +13,21 @@
 - 不可恢复错误必须给出明确失败原因。
 - 关键路径必须有降级或回退方案。
 
-### 2. 不让密码、token、PII 进入日志 — 不容商量 (NON-NEGOTIABLE)
+### 2. 安全与隐私底线 (Security & Privacy Base) — 不容商量 (NON-NEGOTIABLE)
 
-以下内容禁止进入日志、错误信息、埋点和测试快照：
+- **日志脱敏**：以下内容禁止进入日志、错误信息、埋点和测试快照：密码、token、API key、cookie、session、身份证件信息、手机号、邮箱、用户私密内容。日志模块必须有脱敏逻辑，且脱敏逻辑必须有测试。
+- **零信任输入 (Zero-Trust Inputs)**：系统边界（如 HTTP API, RPC, MQ 消费者）处 MUST 使用强 Schema 对输入进行严格校验。严禁直接将外部输入原样透传给数据库执行或用于文件路径拼接。
+- **凭证隔离 (No Hardcoded Secrets)**：代码库中（包括测试代码）绝对禁止硬编码任何 Secret（Token、Key、密码等）。必须通过环境变量、KMS 或 Secret Manager 在运行时注入。
+- **最小权限原则 (Least Privilege)**：应用连接数据库或云服务 MUST 使用最小权限账号。例如：业务服务连 DB 绝不能用具有 `DROP TABLE` 权限的 `root` 账号；只读接口的 DB 账号不应有写权限。
 
-- 密码
-- token
-- API key
-- cookie
-- session
-- 身份证件信息
-- 手机号
-- 邮箱
-- 用户私密内容
+### 3. 核心数据写入的防御与测试 (Core Data Defense & Testing) — 不容商量 (NON-NEGOTIABLE)
 
-日志模块必须有脱敏逻辑。脱敏逻辑必须有测试。
+核心数据写入路径包括：钱、用户身份、权限、订单、资产、数据删除/迁移、状态不可逆变更。对于这类核心路径，必须做到：
 
-### 3. 不在没测试的情况下改核心数据写入路径 — 不容商量 (NON-NEGOTIABLE)
-
-核心数据写入路径包括：
-
-- 钱
-- 用户身份
-- 权限
-- 订单
-- 资产
-- 数据删除
-- 数据迁移
-- 状态不可逆变更
-
-这类代码必须先写失败测试，再写实现。
+- **测试先行**：这类代码 MUST 先写失败测试，再写实现。
+- **强制幂等 (Mandatory Idempotency)**：所有非安全/非幂等的 HTTP 动词（POST/PATCH/PUT）或核心数据写入 RPC，MUST 设计为幂等的。确保外部重试调用不会产生副作用（如扣两次钱）。
+- **并发控制 (Concurrency Control)**：核心业务状态更新 MUST 有并发保护（如数据库的乐观锁/版本号，或分布式锁），严禁无保护的“读-改-写”操作（Read-Modify-Write）导致数据覆盖。
+- **容忍重复投递 (Idempotent Consumers)**：所有的异步任务（Job）和消息队列消费者 MUST 假设消息会被至少投递一次（At-least-once），消费逻辑必须自行处理重复执行的情况。
 
 ### 4. 代码质量 (Code Quality) — 不容商量 (NON-NEGOTIABLE)
 
@@ -93,8 +78,11 @@
 - **回归门禁**：性能基准跌出预算 [X]% 即阻断合并，与单元测试同等地位。
 - **可降级**：所有外部依赖必须有超时、重试上限、熔断与降级路径；不允许无界等待。
 
-### 9. 可观测性与版本治理 (Observability & Versioning)
+### 9. 架构生命周期与可观测性 (Lifecycle, Observability & Versioning)
 
+- **启动即防御 (Fail-Fast on Startup)**：应用在启动阶段 MUST 校验所有必填的配置（环境变量）和关键外部依赖连通性。如果不满足条件，必须立即 Crash/Panic 退出，严禁“带病启动”。
+- **优雅停机 (Graceful Shutdown)**：应用收到 `SIGTERM` 信号时，MUST 停止接收新请求，并等待已在处理中的请求执行完毕或超时后，再断开数据库连接并退出，确保发布过程中零请求丢失。
+- **基础设施即代码 (IaC)**：所有生产环境的基础设施配置（DB、缓存、K8s 部署）MUST 代码化并随代码库进行版本控制。严禁通过云控制台手工（ClickOps）修改生产环境配置。
 - **结构化日志**：日志 MUST 是 JSON 结构化、带 trace id；禁止 `print` / `console.log` 进入主分支。
 - **三大支柱齐备**：所有线上服务 MUST 输出 metrics（RED/USE）、logs、traces，并接入统一平台。
 - **SemVer 强制**：对外接口（API、库、CLI）严格遵循 MAJOR.MINOR.PATCH；破坏性变更 MUST 走废弃期 + 迁移指南。
