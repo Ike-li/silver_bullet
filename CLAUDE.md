@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `prompt/` — 独立 prompt 模板
 - `mcp/` — MCP 相关（预留）
 - `workflow/` — 工作流模板（constitution、fridge_magnet 等项目原则模板）
-- `docs/` — 方法论文档（预留）
+- `docs/` — 方法论与职业指南
 
 ## 常用命令
 
