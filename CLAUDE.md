@@ -4,60 +4,81 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 项目概述
 
-`silver_bullet` 是一个 AI 能力资产管理仓库，集中管理 skill、agent、prompt、MCP 等 AI 能力资源。核心目标：对外部能力进行引入、审计、适配、测试、启用和追踪更新。
-
-这不是传统软件工程项目——没有构建系统、没有应用代码。仓库内容主要是 Markdown 文档和 skill 定义。
-
-## 任务路由
-
-根据用户意图选择对应的工作流：
-
-| 用户意图 | 做什么 |
-|:---------|:-------|
-| 接入第三方 skill（给出 URL/路径） | 读取 `skills/skill-intake/SKILL.md` 并执行接入流程 |
-| 从零新建 skill | 运行 `./scripts/new-skill.sh <name>`，然后按 `docs/skill-authoring-guidelines.md` 编写 |
-| 执行复杂任务（重构/迁移/架构改造） | 读取 `skills/silver-bullet-spec/SKILL.md` 并执行 |
-| 排查 bug / 定位根因 | 读取 `skills/systematic-debugging-lite/SKILL.md` 并执行 |
-| 安装 skill 到目标项目 | 运行 `./scripts/install.sh <skill> <tool> <target>` |
-| 校验 skill 质量 | 运行 `./scripts/validate.sh [skill-name]` |
+`silver_bullet` 是一个 AI 能力资产管理仓库，用于集中引入、审计、适配、测试和启用 AI agent skill。不是简单收集，而是对外部能力进行可控管理。
 
 ## 仓库结构
 
-```
-skills/           # skill 目录，每个 skill 一个子目录，入口为 SKILL.md
-vendor/           # 第三方能力仓库（git submodule，只读，不要修改）
-docs/             # 方法论文档（编写指南、评估流程）
-scripts/          # 工具脚本（install/validate/new-skill/intake-skill）
-agent/ mcp/ prompt/  # 预留目录
+- `skills/` — 自研 skill（每个 skill 一个目录，含 `SKILL.md` + `references/`）
+- `vendor/` — 第三方能力仓库（git submodule，只读，不可修改）
+- `scripts/` — 工具脚本（skill 管理、安装、校验）
+- `prompt/` — 独立 prompt 模板
+- `mcp/` — MCP 相关（预留）
+- `workflow/` — 工作流模板（constitution、fridge_magnet 等项目原则模板）
+- `docs/` — 方法论文档（预留）
+
+## 常用命令
+
+```bash
+# 校验所有 skill 结构与内容质量
+./scripts/validate.sh
+./scripts/validate.sh <skill-name>     # 校验单个 skill
+
+# 安装 skill 到目标项目（支持 claude-code, cursor, codex, copilot）
+./scripts/install.sh <skill> <tool> <target-dir> [--link]
+./scripts/install.sh --update <skill> <tool> <target-dir>
+./scripts/install.sh --uninstall <skill> <tool> <target-dir>
+./scripts/install.sh --list            # 列出可用 skill
+
+# 新增第三方 vendor 仓库
+./scripts/add-vendor.sh <repo-url> [vendor-name]
+
+# vendor submodule 管理
+git submodule update --init            # 初始化
+git submodule update --remote          # 更新全部 vendor
+
+# 同步入口文件（CLAUDE.md → AGENTS.md/copilot-instructions/cursor rules）
+./scripts/sync-entry.sh
 ```
 
-## 当前 skill
+## 创建新 Skill
 
-| Skill | 定位 |
+创建自研 skill 使用 `vendor/anthropic-agent-skills` 中的 skill-creator：
+
+1. 先更新 vendor：`git submodule update --remote vendor/anthropic-agent-skills`
+2. 参考 `vendor/anthropic-agent-skills/skills/skill-creator/` 中的 skill 来创建
+3. 规范见 `vendor/anthropic-agent-skills/spec/agent-skills-spec.md`，模板见 `vendor/anthropic-agent-skills/template/SKILL.md`
+
+## 入口文件同步机制
+
+CLAUDE.md 是单一源（Single Source of Truth）：
+- `AGENTS.md` — symlink 到 CLAUDE.md
+- `.github/copilot-instructions.md` — symlink 到 CLAUDE.md
+- `.cursor/rules/silver-bullet.mdc` — 由 `sync-entry.sh` 生成（Cursor 需要特殊 frontmatter）
+
+## 当前自研 Skill
+
+| Skill | 用途 |
 |:------|:-----|
-| `silver-bullet-spec` | 复杂任务总控：分析 → 计划 → 执行 → 归档 |
-| `systematic-debugging-lite` | 执行阶段排障：先根因后修复 |
-| `skill-intake` | 第三方 skill 接入与适配 |
+| `silver-bullet-spec` | 复杂任务总控：分析 → 计划 → 执行 → 归档（规范驱动工作流） |
+| `systematic-debugging-lite` | 执行阶段排障：先根因后修复、先证据后结论 |
+| `frontend-e2e-bootstrap` | 从零设计前端 E2E 测试体系（Playwright） |
 
-## Skill 格式规范
+## 当前 Vendor（git submodule）
 
-```
-skills/<skill-name>/
-├── SKILL.md              # 必需：入口文件，含 YAML frontmatter
-├── references/           # 可选：按需读取的参考文档
-├── scripts/              # 可选：可重复执行的脚本
-├── examples/             # 可选：参考示例
-└── assets/               # 可选：不常驻上下文的资源
-```
-
-SKILL.md frontmatter 必须包含 `name`（与目录名一致，小写 kebab-case）和 `description`（触发契约），推荐包含 `version`。
-
-详细编写规范见 `docs/skill-authoring-guidelines.md`。
+| 目录 | 来源 |
+|:-----|:-----|
+| `vendor/anthropic-agent-skills` | anthropics/skills |
+| `vendor/superpowers` | obra/superpowers |
+| `vendor/spec_driven_develop` | zhu1090093659/spec_driven_develop |
+| `vendor/minimax-ai` | MiniMax-AI/skills |
+| `vendor/agentsmd` | agentsmd/agents.md |
+| `vendor/spec-kit` | github/spec-kit |
+| `vendor/Trellis` | mindfold-ai/Trellis |
 
 ## 关键约定
 
-- `vendor/` 目录只读，不要修改
-- 新增 skill 优先新增"专项执行能力"，不要膨胀总控 skill
-- `description` 是触发契约——必须包含具体任务类型、典型用户表达、不该触发的场景
-- 仓库文档和 skill 内容以中文为主
-- **入口文件同步**：CLAUDE.md 是单一源，`AGENTS.md`、`.cursor/rules/silver-bullet.mdc`、`.github/copilot-instructions.md` 由 `./scripts/sync-entry.sh` 自动生成。修改内容只改 CLAUDE.md，然后运行同步脚本
+- vendor 目录是只读的，不可修改第三方代码
+- 新 skill 名称必须是小写 kebab-case 格式
+- `install.sh` 支持 `--link` 模式（symlink 而非复制，方便开发时同步）
+- `silver-bullet-spec` 的上游参考在 `vendor/spec_driven_develop/`，仅作对照
+- `workflow/spec-kit/` 包含项目原则模板（constitution、fridge_magnet），用于在目标项目中实例化
