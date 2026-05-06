@@ -22,3 +22,6 @@
 [submodule "vendor/Trellis"]
 	path = vendor/Trellis
 	url = https://github.com/mindfold-ai/Trellis
+[submodule "vendor/oh-my-claudecode"]
+	path = vendor/oh-my-claudecode
+	url = https://github.com/Yeachan-Heo/oh-my-claudecode
